@@ -1,0 +1,20 @@
+name: GitHub Actions Demo
+on:
+  push: {}
+  schedule:
+    - cron: '45 15 * * *'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt update && sudo apt install -qq qemu-user
+      - uses: actions/setup-go@v3
+      - uses: actions/checkout@v3
+      - run: go mod download -x
+      - run: go generate .
+      - run: GOOS=linux GOARCH=s390x go build -o test-binary .
+      - run: file test-binary
+      - run: |
+          for i in {1..100}; do
+            qemu-s390x ./test-binary >/dev/null || exit 1
+          done
