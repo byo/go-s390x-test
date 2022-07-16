@@ -7,7 +7,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt update && sudo apt install -qq qemu-user
+      - uses: docker/setup-qemu-action@v2
       - uses: actions/setup-go@v3
       - run: go version
       - run: go env
@@ -18,6 +18,6 @@ jobs:
       - run: file test-binary
       - run: |
           for i in {1..1000}; do
-            qemu-s390x ./test-binary >/dev/null || exit 1
+            ./test-binary >/dev/null || exit 1
             echo "Iteration $i successful"
           done
